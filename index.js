@@ -1,15 +1,17 @@
 const taskContainer = document.querySelector(".task__container");
-const saveChanges=()=>{
-    const taskData={
-        id:`${Date.now()}`, //unique number for id
-        imageUrl:document.getElementById("imageurl").value,
-        taskTitle:document.getElementById("tasktitle").value,
-        taskType:document.getElementById("tasktype").value,
-        taskDescription:document.getElementById("taskdescription").value,
 
-    };
+const globalStore = []; //Some values
 
-    const newCard=`
+const saveChanges = () => {
+  const taskData = {
+    id: `${Date.now()}`, //unique number for id
+    imageUrl: document.getElementById("imageurl").value,
+    taskTitle: document.getElementById("tasktitle").value,
+    taskType: document.getElementById("tasktype").value,
+    taskDescription: document.getElementById("taskdescription").value,
+  };
+
+  const newCard = `
     <div class="row task__container" id=${taskData.id}>
                     <div class="col-md-6 col-lg-4">
                         <div class="card">
@@ -31,9 +33,22 @@ const saveChanges=()=>{
                 </div>
     `;
 
-    taskContainer.insertAdjacentHTML("beforeend",newCard);
+  const loadInitialCardData = () => {
+      //Local Storage to load tasky card data
+      const getCardData=localStorage.getItem("tasky");
+      //convert to normal object
+      const {cards}=JSON.parse(getCardData);
+      //loop over those array of task object to create HTML card,inject it to DOM
+      cards.map((cardObject)=>{
+        taskContainer.insertAdjacentHTML("beforeend", cardObject);
+     //update our globalStore
+        globalStore.push(cardObject);
+      })
+      
+  };
 
+  taskContainer.insertAdjacentHTML("beforeend", newCard);
+  globalStore.push(taskData); 
+
+  localStorage.setItem("tasky", JSON.stringify({ cards: globalStore }));
 };
-
-
- 
